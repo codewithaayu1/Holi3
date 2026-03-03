@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aayu | 3D Happy Holi</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+background:#000;
+color:#fff;
+overflow:hidden;
+text-align:center;
+perspective:1000px;
+}
+
+/* 3D Container */
+.wrapper{
+width:100%;
+height:100vh;
+position:relative;
+transform-style:preserve-3d;
+transition:transform .2s ease;
+}
+
+/* Sphere */
+.sphere{
+position:absolute;
+top:50%;left:50%;
+width:350px;height:350px;
+margin:-175px;
+border-radius:50%;
+background:conic-gradient(red,orange,yellow,green,blue,indigo,violet,red);
+animation:rotate 15s linear infinite;
+filter:blur(60px);
+opacity:.6;
+z-index:-2;
+}
+
+@keyframes rotate{
+from{transform:rotate(0)}to{transform:rotate(360deg)}
+}
+
+.hero{
+position:absolute;
+top:50%;left:50%;
+transform:translate(-50%,-50%);
+z-index:5;
+}
+
+.hero h1{
+font-size:65px;
+letter-spacing:6px;
+text-shadow:0 0 20px #ff00ff,0 0 40px #00ffff;
+}
+
+.subtitle{
+margin-top:10px;
+font-size:22px;
+color:#ff0;
+}
+
+/* Buttons */
+.btn{
+position:fixed;
+bottom:25px;
+padding:12px 25px;
+border-radius:50px;
+font-weight:bold;
+cursor:pointer;
+color:#000;
+box-shadow:0 0 15px yellow;
+background:linear-gradient(45deg,#ff0,#ff00ff);
+z-index:10;
+transition:.3s;
+}
+
+.btn:active{transform:scale(.95);}
+.about-btn{right:25px;}
+.review-btn{left:25px;}
+
+/* Popup */
+.popup{
+position:fixed;
+top:50%;left:50%;
+transform:translate(-50%,-50%) scale(0);
+background:#111;
+padding:25px;
+width:90%;max-width:420px;
+border-radius:20px;
+box-shadow:0 0 30px #ff00ff;
+max-height:80vh;
+overflow:auto;
+z-index:20;
+transition:.3s ease;
+}
+
+.popup.show{
+transform:translate(-50%,-50%) scale(1);
+}
+
+.popup input,.popup textarea{
+width:100%;
+margin:10px 0;
+padding:10px;
+border-radius:8px;
+border:none;
+}
+
+.popup button{
+padding:8px 15px;
+border:none;
+border-radius:8px;
+background:#ff00ff;
+color:#fff;
+cursor:pointer;
+margin-top:5px;
+}
+
+.close-btn{background:red;}
+
+#typing{
+font-size:16px;
+line-height:1.6;
+white-space:pre-wrap;
+}
+
+@keyframes blink{50%{opacity:0}}
+
+.rain{
+position:fixed;
+width:8px;height:20px;
+top:-20px;
+animation:fall linear infinite;
+pointer-events:none;
+z-index:1;
+}
+
+@keyframes fall{
+to{transform:translateY(110vh);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper" id="wrapper">
+
+<div class="sphere"></div>
+
+<section class="hero">
+<h1>AAYU</h1>
+<div class="subtitle">🌈 Happy Holi 🌈</div>
+</section>
+
+</div>
+
+<div class="btn about-btn" onclick="openAbout()">About</div>
+<div class="btn review-btn" onclick="openReview()">Give Review ⭐</div>
+
+<!-- ABOUT -->
+<div class="popup" id="aboutBox">
+<h3>About Me 👋</h3>
+<div id="typing"></div>
+<button class="close-btn" onclick="closeAbout()">Close</button>
+</div>
+
+<!-- REVIEW -->
+<div class="popup" id="reviewBox">
+<h3>Send Your Review ⭐</h3>
+<input type="text" id="name" placeholder="Your Name">
+<textarea id="message" rows="4" placeholder="Write your review..."></textarea>
+<button onclick="sendReview()">Send Review</button>
+<button class="close-btn" onclick="closeReview()">Close</button>
+</div>
+
+<script>
+
+/* EMAILJS */
+(function(){
+emailjs.init("lbUc90K5siLEkr-op");
+})();
+
+/* 3D Mouse Parallax */
+const wrapper=document.getElementById("wrapper");
+
+document.addEventListener("mousemove",(e)=>{
+let x=(window.innerWidth/2 - e.clientX)/40;
+let y=(window.innerHeight/2 - e.clientY)/40;
+wrapper.style.transform=`rotateY(${x}deg) rotateX(${y}deg)`;
+});
+
+document.addEventListener("touchmove",(e)=>{
+let touch=e.touches[0];
+let x=(window.innerWidth/2 - touch.clientX)/40;
+let y=(window.innerHeight/2 - touch.clientY)/40;
+wrapper.style.transform=`rotateY(${x}deg) rotateX(${y}deg)`;
+});
+
+/* Rain */
+function createRain(){
+let drop=document.createElement("div");
+drop.className="rain";
+drop.style.left=Math.random()*100+"vw";
+drop.style.background=`hsl(${Math.random()*360},100%,50%)`;
+drop.style.animationDuration=Math.random()*2+2+"s";
+document.body.appendChild(drop);
+setTimeout(()=>drop.remove(),4000);
+}
+setInterval(createRain,150);
+
+/* Popup Control */
+function openAbout(){
+document.getElementById("aboutBox").classList.add("show");
+startTyping();
+}
+function closeAbout(){
+document.getElementById("aboutBox").classList.remove("show");
+}
+function openReview(){
+document.getElementById("reviewBox").classList.add("show");
+}
+function closeReview(){
+document.getElementById("reviewBox").classList.remove("show");
+}
+
+/* Typing */
+const text = `Hi 👋 I'm Aayu
+
+A Web Developer
+Who Loves Colors,
+Festivals & Creativity 🎨✨
+
+Building Fun & Interactive
+Web Experiences 💻
+
+From Bihar With Passion ❤️
+
+Wishing You A Very
+Colorful & Joyful
+Happy Holi 🌈🎉
+
+Sab logan ke
+rang-birangi Holi ke
+dher saara badhaiya 🎨🌈
+
+Happy Holi
+Aapke friend
+Web Developer Aayu ki or se 🌸✨`;
+
+function startTyping(){
+let typing=document.getElementById("typing");
+typing.innerHTML="";
+let index=0;
+
+function typeLetter(){
+if(index<text.length){
+let char=text[index];
+if(char==="\\n"){typing.innerHTML+="<br>";}
+else{
+let span=document.createElement("span");
+span.textContent=char;
+span.style.color=`hsl(${Math.random()*360},100%,65%)`;
+typing.appendChild(span);
+}
+index++;
+setTimeout(typeLetter,20);
+}else{
+let cursor=document.createElement("span");
+cursor.textContent="|";
+cursor.style.animation="blink 1s infinite";
+typing.appendChild(cursor);
+}
+}
+typeLetter();
+}
+
+/* Review */
+function sendReview(){
+let name=document.getElementById("name").value;
+let msg=document.getElementById("message").value;
+
+if(name===""||msg===""){
+alert("Please fill all fields 😅");
+return;
+}
+
+emailjs.send("service_ux3vl37","template_9zhtbgb",{
+from_name:name,
+message:msg
+})
+.then(()=>{alert("Review Successfully Sent 🔥");closeReview();})
+.catch(err=>{alert("Error aaya 😢");console.log(err);});
+}
+
+</script>
+
+</body>
+  </html>
